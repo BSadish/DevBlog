@@ -24,6 +24,9 @@ avatar:{
 bio:{
     type:String,
     default:""
+},
+refreshToken:{
+    type:String
 }
 
     }
