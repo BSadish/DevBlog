@@ -125,3 +125,36 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     return res.status(200)
         .json(new ApiResponse(200, updatedUser, "Image uploaded successfully"))
 })
+
+
+export const updateUser = asyncHandler(async (req, res) => {
+
+    const { username, email, password, bio } = req.body
+    const updateFields = {};
+    if (username) updateFields.username = username;
+    if (email) updateFields.email = email;
+    if (bio) updateFields.bio = bio
+    if (password) updateFields.password = password;
+    const updatedUser = await User.findByIdAndUpdate(req.user._id,
+        {
+            $set: {
+                updateFields
+            }
+        },
+        { new: true }
+
+    ).select("-password -refreshToken")
+
+    return res.status(200)
+        .json(new ApiResponse(200, updatedUser, "User details updated successfully"))
+})
+
+export const deleteUser = asyncHandler(async (req, res) => {
+    const deletedUser = await User.findByIdAndDelete(req.user._id)
+    if (!deletedUser) {
+        throw new ApiError(404, "User not found");
+    }
+    return res.status(201)
+        .json(new ApiResponse(201, deleteUser, "User deleted successfully"))
+
+})
