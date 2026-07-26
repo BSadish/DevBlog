@@ -1,14 +1,16 @@
-import { User } from "../model/user.model"
-import { ApiError } from "../util/ApiError"
+import { User } from "../model/user.model.js"
+import { ApiError } from "../util/ApiError.js"
 import jwt from "jsonwebtoken"
 
 export const verifyJWT = async (req, res, next) => {
 
-    try {
-        const token = req.cookie.accessToken || req.header("Authorization")?.replace("Breaer", "")
+    
+        const token = req.cookies.accessToken || req.header("Authorization")?.replace("Breaer ", "")
+
         if (!token) {
             throw new ApiError(401, "Token not found invalide request")
         }
+        try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         if (!decoded) {
@@ -21,6 +23,7 @@ export const verifyJWT = async (req, res, next) => {
         req.user = user
         next()
     } catch (error) {
+        console.log(error)
 throw new ApiError(401,error.message)
     }
 }
