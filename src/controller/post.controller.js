@@ -2,27 +2,37 @@ import { Post } from "../model/post.model.js";
 import { ApiError } from "../util/ApiError.js";
 import { ApiResponse } from "../util/ApiResponse.js";
 import { asyncHandler } from "../util/asyncHandler.js";
+import { uploadOnCloudinary } from "../util/cloudinary.js";
 
 
 export const createPost=asyncHandler(async(req,res)=>{
 
-const {title, content,author}=req.body
+const {title, content,author,catagory,tags}=req.body
 
 
 if([title,content].some(field=>(field).trim()==="")){
     throw new ApiError(401,"Content on all field are required")
 }
 
-
 const user=req.user
 if(!user){
     throw new ApiError(401,"User is empty or not defined")
+}
+const coverImagePath=req.file?.path
+if(!coverImagePath){
+    throw new ApiError(401,"Image path not found")
+}
+const coverImage=await uploadOnCloudinary(coverImagePath)
+if(!coverImage?.url){
+    throw new ApiError(401,"Image not uploaded on cloudinary")
 }
 
 
 const userPost=await Post.create({
     title,
     content,
+    catagory,
+    tags,
     author:req.user._id
     
 
