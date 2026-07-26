@@ -1,28 +1,28 @@
 import mongoose from "mongoose";
 
-const postSchema = new mongoose.connect((
+const postSchema = new mongoose.Schema((
 
     {
         title: {
             type: String,
-            requird: true
+            required: true
         },
         content: {
             type: String,
             required: true
         },
         coverImage: {
-            type: string
+            type: String
         },
         category: {
             type: String
         },
         tags:
-            [string],
+            [String],
         author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true
+            // required: true
         },
         views: {
             type: Number,
