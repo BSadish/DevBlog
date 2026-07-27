@@ -25,6 +25,10 @@ bio:{
     type:String,
     default:""
 },
+isDeleted:{
+    type:Boolean,
+    default:false
+},
 refreshToken:{
     type:String
 }

@@ -14,7 +14,7 @@ const postSchema = new mongoose.Schema((
         coverImage: {
             type: String
         },
-        category: {
+        catagory: {
             type: String
         },
         tags:
