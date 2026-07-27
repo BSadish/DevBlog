@@ -3,7 +3,7 @@ import { ApiError } from "../util/ApiError.js";
 import { ApiResponse } from "../util/ApiResponse.js";
 import { asyncHandler } from "../util/asyncHandler.js";
 import { uploadOnCloudinary } from "../util/cloudinary.js";
-
+import { Post } from "../model/post.model.js"
 
 export const generateAccessAndRefreshToken = async function (userid) {
     try {
@@ -24,7 +24,7 @@ export const generateAccessAndRefreshToken = async function (userid) {
 export const userRegister = asyncHandler(async (req, res) => {
 
 
-    const { username, password, email, avatar, bio } = req.body
+    const { username, password, email, bio } = req.body
     // console.log(req.body.email)
     if ([username, password, email].some((field) => !field || field.trim() === "")) {
         throw new ApiError(401, "All field must be filled")
@@ -37,11 +37,12 @@ export const userRegister = asyncHandler(async (req, res) => {
         throw new ApiError(401, "User with current name and email already existed")
     }
 
+
+
     const user = await User.create({
         username,
         password,
         email,
-        avatar,
         bio
     })
     if (!user) {
@@ -63,7 +64,7 @@ export const userLogin = asyncHandler(async (req, res) => {
     const user = await User.findOne({
         $or: [{ username }, { email }]
     })
-    if (!user) {
+    if (!user || user.isDeleted) {
         throw new ApiError(401, "User with such credentials is not present")
     }
 
@@ -93,8 +94,16 @@ export const userLogin = asyncHandler(async (req, res) => {
 
 export const userProfile = asyncHandler(async (req, res) => {
 
+
+    const user = await User.find({})
+
+    if (!user || user.isDeleted) {
+        throw new ApiError(404, "User not found");
+    }
+
     return res.status(200)
-        .json(new ApiResponse(200, req.user))
+        .json(new ApiResponse(200, users, "List of users"))
+
 
 })
 
@@ -150,7 +159,9 @@ export const updateUser = asyncHandler(async (req, res) => {
 })
 
 export const deleteUser = asyncHandler(async (req, res) => {
-    const deletedUser = await User.findByIdAndDelete(req.user._id)
+    const deletedUser = await User.findByIdAndDelete(req.user._id, {
+        isDeleted: true
+    })
     if (!deletedUser) {
         throw new ApiError(404, "User not found");
     }
