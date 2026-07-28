@@ -23,15 +23,15 @@ A RESTful backend API for a blogging platform, built with Node.js, Express, and 
 
 ## Project Structure
 src/
-├── controller/ # Request handlers (business logic)
-├── model/ # Mongoose schemas (User, Post, Comment, Like)
-├── route/ # Express route definitions
-├── middleware/ # Auth middleware, Multer config
-├── util/ # ApiError, ApiResponse, asyncHandler, Cloudinary helper
-├── db/ # MongoDB connection
-├── app.js # Express app setup
-├── constants.js # App-wide constants
-└── index.js # Entry point
+├── controller/    # Request handlers (business logic)
+├── model/         # Mongoose schemas (User, Post, Comment, Like)
+├── route/         # Express route definitions
+├── middleware/    # Auth middleware, Multer config
+├── util/          # ApiError, ApiResponse, asyncHandler, Cloudinary helper
+├── db/            # MongoDB connection
+├── app.js         # Express app setup
+├── constants.js   # App-wide constants
+└── index.js       # Entry point
 
 ## Getting Started
 
