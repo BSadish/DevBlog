@@ -62,13 +62,13 @@ export const getPostById = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     console.log(req.params.postId)
 
-    const post = await Post.findOneAndUpdate(
+    const post = await Post.findByIdAndUpdate(
         postId,
         {
             $inc: { views: 1 }
         },
         {
-            returnDocument: "after"
+            new: true
         }
 
     )
