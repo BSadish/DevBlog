@@ -64,6 +64,7 @@ export const getPostById = asyncHandler(async (req, res) => {
 
     const post = await Post.findByIdAndUpdate(
         postId,
+        
         {
             $inc: { views: 1 }
         },
