@@ -1,3 +1,38 @@
+# DevBlog API
+
+A RESTful backend API for a blogging platform, built with Node.js, Express, and MongoDB. Supports user authentication, blog posts with image uploads, comments, and likes.
+
+## Features
+
+- JWT-based authentication (access + refresh tokens)
+- Secure password hashing with bcrypt
+- Create, read blog posts with cover image upload (Cloudinary)
+- Comment on posts
+- Like / unlike posts
+- User profile management (update details, update avatar, delete account)
+- Centralized error handling with consistent JSON responses
+
+## Tech Stack
+
+- **Runtime:** Node.js
+- **Framework:** Express 5
+- **Database:** MongoDB with Mongoose
+- **Auth:** JSON Web Tokens (jsonwebtoken), bcrypt
+- **File Uploads:** Multer + Cloudinary
+- **Other:** cookie-parser, cors, dotenv
+
+## Project Structure
+src/
+├── controller/ # Request handlers (business logic)
+├── model/ # Mongoose schemas (User, Post, Comment, Like)
+├── route/ # Express route definitions
+├── middleware/ # Auth middleware, Multer config
+├── util/ # ApiError, ApiResponse, asyncHandler, Cloudinary helper
+├── db/ # MongoDB connection
+├── app.js # Express app setup
+├── constants.js # App-wide constants
+└── index.js # Entry point
+
 ## Getting Started
 
 ### Prerequisites
