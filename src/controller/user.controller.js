@@ -4,6 +4,7 @@ import { ApiResponse } from "../util/ApiResponse.js";
 import { asyncHandler } from "../util/asyncHandler.js";
 import { uploadOnCloudinary } from "../util/cloudinary.js";
 import { Post } from "../model/post.model.js"
+import jwt from "jsonwebtoken"
 
 export const generateAccessAndRefreshToken = async function (userid) {
     try {
@@ -50,7 +51,7 @@ export const userRegister = asyncHandler(async (req, res) => {
     }
 
     return res.status(201)
-        .json(new ApiResponse(201, "User is registered successfully"))
+        .json(new ApiResponse(201, user,"User is registered successfully"))
 
 })
 
@@ -168,4 +169,67 @@ export const deleteUser = asyncHandler(async (req, res) => {
     return res.status(201)
         .json(new ApiResponse(201, deleteUser, "User deleted successfully"))
 
+})
+
+export const newrefreshToken=asyncHandler(async(req,res)=>{
+    const incomingToken=req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingToken){
+        throw new ApiError(401,"RrefreshToken Missing")
+    }
+
+
+    const decoded=jwt.verify(incomingToken,process.env.REFRESH_TOKEN_SECRET)
+
+    if(!decoded){
+        throw new ApiError(401, "Invalid refreshToken")
+    }
+
+    const user=await User.findById(decoded._id)
+  
+
+    if(incomingToken!==user.refreshToken){
+        throw new ApiError(401,"Refresh Token is expired or already used")
+
+    }
+
+    const {accessToken, refreshToken}=await generateAccessAndRefreshToken(user._id)
+
+    const options={
+        httpOnly:true,
+        secure:true
+    }
+    return res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { accessToken, refreshToken }, "Access token refreshed"))
+})
+
+
+export const logOut=asyncHandler(async(req,res)=>{
+
+  
+   const user=await User.findByIdAndUpdate(req.user._id,
+    
+    {
+       
+        $set:{
+            refreshToken:undefined
+        }},
+
+        {
+            new:true
+        }
+    
+   )
+   const options={
+    httpOnly:true,
+    secure:true,
+   
+   }
+   console.log(user)
+   return res.status(200)
+   .clearCookie("accessToken",options)
+   .clearCookie("refreshToken",options)
+   .json(new ApiResponse(200,{},"User looged out Successfully"))
 })
