@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import postRouter from "./route/post.route.js"
 import commentRouter from "./route/comment.router.js"
 import userLike from "./route/like.router.js"
+import { errorHandler } from "./middleware/erro.middleware.js";
 const app=express();
 
 app.use(express.json({limit:"16kb"}))
@@ -16,5 +17,5 @@ app.use("/api/v1/blog",postRouter)
 app.use("/api/v1/blog",commentRouter)
 app.use("/api/v1/blog",userLike)
 
-
+app.use(errorHandler)
 export {app}
