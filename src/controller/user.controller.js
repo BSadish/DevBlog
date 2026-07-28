@@ -28,14 +28,14 @@ export const userRegister = asyncHandler(async (req, res) => {
     const { username, password, email, bio } = req.body
     // console.log(req.body.email)
     if ([username, password, email].some((field) => !field || field.trim() === "")) {
-        throw new ApiError(401, "All field must be filled")
+        throw new ApiError(400, "All field must be filled")
     }
 
     const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
     if (existedUser) {
-        throw new ApiError(401, "User with current name and email already existed")
+        throw new ApiError(409, "User with current name and email already existed")
     }
 
 
@@ -47,7 +47,7 @@ export const userRegister = asyncHandler(async (req, res) => {
         bio
     })
     if (!user) {
-        throw new ApiError(401, "Field are missing to be inserted")
+        throw new ApiError(400, "Field are missing to be inserted")
     }
 
     return res.status(201)
