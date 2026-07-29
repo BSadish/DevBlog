@@ -24,7 +24,7 @@ export const generateAccessAndRefreshToken = async function (userid) {
 
 export const userRegister = asyncHandler(async (req, res) => {
 
-
+console.log("Hello User")
     const { username, password, email, bio } = req.body
     // console.log(req.body.email)
     if ([username, password, email].some((field) => !field || field.trim() === "")) {
@@ -58,7 +58,7 @@ export const userRegister = asyncHandler(async (req, res) => {
 
 export const userLogin = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
-    if (!username || !email) {
+    if ((!username && !email) || !password) {
         throw new ApiError(401, "The form should not be empty")
     }
 
@@ -103,7 +103,7 @@ export const userProfile = asyncHandler(async (req, res) => {
     }
 
     return res.status(200)
-        .json(new ApiResponse(200, users, "List of users"))
+        .json(new ApiResponse(200, user, "List of users"))
 
 
 })
@@ -147,9 +147,8 @@ export const updateUser = asyncHandler(async (req, res) => {
     if (password) updateFields.password = password;
     const updatedUser = await User.findByIdAndUpdate(req.user._id,
         {
-            $set: {
-                updateFields
-            }
+            $set:  updateFields
+            
         },
         { new: true }
 
@@ -167,7 +166,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
         throw new ApiError(404, "User not found");
     }
     return res.status(201)
-        .json(new ApiResponse(201, deleteUser, "User deleted successfully"))
+        .json(new ApiResponse(201, deletedUser, "User deleted successfully"))
 
 })
 

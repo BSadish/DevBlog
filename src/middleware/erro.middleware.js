@@ -13,7 +13,7 @@ export const errorHandler=(err,req,res,next)=>{
         success:false,
         message:error.message,
         errors:error.errors,
-        ...(process.env.NODE_ENV)="development"? {stack:error.stack}:{}
+        ...(process.env.NODE_ENV)==="development"? {stack:error.stack}:{}
     };
     return res.status(error.statusCode)
     .json(response);
