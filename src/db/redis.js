@@ -1,3 +1,4 @@
+import "dotenv/config"; 
 import Redis from "ioredis";
 
 const redisClient=new Redis({
@@ -6,6 +7,11 @@ const redisClient=new Redis({
     host:process.env.REDIS_HOST,
     port:process.env.REDIS_PORT
 })
+
+console.log("REDIS_HOST:", process.env.REDIS_HOST);
+console.log("REDIS_HOST:", process.env.REDIS_PORT
+
+);
 
 redisClient.on("connect",()=>console.log("Connecting to Redis"))
 redisClient.on("ready", () => console.log("Redis is ready....."));

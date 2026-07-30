@@ -3,6 +3,7 @@ import { userRegister,userLogin,userProfile, updateUserProfile, updateUser, dele
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import {authorizeRole} from "../middleware/role.middleware.js"
 import { upload } from "../middleware/multer.middleware.js";
+// import { limiter } from "../middleware/ratelimit.middleware.js";
 const router=Router();
 
 router.route('/login').post(userLogin);

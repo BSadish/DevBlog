@@ -19,6 +19,10 @@ const postSchema = new mongoose.Schema((
         },
         tags:
             [String],
+            slug:{
+                type:String,
+                unique:true
+            },
         author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
