@@ -3,6 +3,7 @@ import { ApiError } from "../util/ApiError.js";
 import { ApiResponse } from "../util/ApiResponse.js";
 import { asyncHandler } from "../util/asyncHandler.js";
 import { uploadOnCloudinary } from "../util/cloudinary.js";
+import slugify from "slugify"
 
 
 export const createPost = asyncHandler(async (req, res) => {
@@ -30,12 +31,22 @@ export const createPost = asyncHandler(async (req, res) => {
     //     throw new ApiError(401,"Image not uploaded on cloudinary")
     // }
 
+    const slug=slugify(title,{
+        lower:true,
+        strict:true
+    })
+  
+   const exitstingslug=await Post.findOne({slug});
+   if(exitstingslug){
+    slug=`${slug}-${Date.now()}`;
+   }
 
     const userPost = await Post.create({
         title,
         content,
         // coverImage:coverImage.url,
         catagory,
+        slug,
         tags,
         author: req.user._id
 
@@ -59,11 +70,12 @@ export const getPostProfile = asyncHandler(async (req, res) => {
 
 export const getPostById = asyncHandler(async (req, res) => {
 
-    const { postId } = req.params;
-    console.log(req.params.postId)
-
-    const post = await Post.findByIdAndUpdate(
-        postId,
+    const { slug } = req.params;
+    // const {posId}=req.params
+//   console.log(req.params.slug)
+// without slug there will be findbyIdAndUpdate
+    const post = await Post.findOneAndUpdate(
+        {slug:slug},
 
         {
             $inc: { views: 1 }
