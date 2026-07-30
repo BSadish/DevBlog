@@ -143,14 +143,14 @@ export const updatePost = asyncHandler(async (req, res) => {
     if (!postId) {
         throw new ApiError(401, "Id not found")
     }
-    const post = await Post.findOne(postId)
+    const post = await Post.findById(postId)
     
     if (!post) {
         throw new ApiError(401, "Invalid post")
         
     }
     console.log("hello")
-    if (post.author.toString() !== req.user._id.toString()) {
+    if (post.author.toString() !== req.user._id.toString() ) {
         throw new ApiError(403, "Forbidden")
     }
 
