@@ -64,7 +64,7 @@ export const getPostById = asyncHandler(async (req, res) => {
 
     const post = await Post.findByIdAndUpdate(
         postId,
-        
+
         {
             $inc: { views: 1 }
         },
@@ -90,11 +90,11 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     if (limit < 1) {
         limit = 1
     }
-    if(limit>50){
-        limit=50
+    if (limit > 50) {
+        limit = 50
     }
 
-   
+
     const search = req.query.search || ""
 
 
@@ -109,12 +109,12 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 
     const totalPosts = await Post.countDocuments(filter)
 
-    
+
 
     const totalPages = Math.ceil(totalPosts / limit);
 
-    const hasNextPage=page<totalPages
-    const hasPreviousPage=page>1
+    const hasNextPage = page < totalPages
+    const hasPreviousPage = page > 1
     const posts = await Post.find(filter)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
@@ -130,4 +130,48 @@ export const getAllPosts = asyncHandler(async (req, res) => {
             hasNextPage,
             hasPreviousPage
         }, "Data Fetched successfully"))
+})
+
+
+export const updatePost = asyncHandler(async (req, res) => {
+   
+    const { title, content, catagory, tags } = req.body
+    // const coverImage = req.file
+      
+    const postId = req.params.id
+    
+    if (!postId) {
+        throw new ApiError(401, "Id not found")
+    }
+    const post = await Post.findOne(postId)
+    
+    if (!post) {
+        throw new ApiError(401, "Invalid post")
+        
+    }
+    console.log("hello")
+    if (post.author.toString() !== req.user._id.toString()) {
+        throw new ApiError(403, "Forbidden")
+    }
+
+//     const myImagePath = req.file?.myImagePath
+//     const uploadFile = await uploadOnCloudinary(myImagePath)
+// if (!uploadFile?.url) {
+//         throw new ApiError(400, "Avatar file is required");
+//     }
+    const updatePost = await Post.findByIdAndUpdate(postId,
+        {
+            $set: {
+                // coverImage: uploadFile.url,
+                title,
+                content,
+                catagory,
+                tags
+            }
+        },
+        { new: true }
+    )
+    return res.status(201)
+    .json(new ApiResponse(201,updatePost,"Post successfully updated"))
+
 })

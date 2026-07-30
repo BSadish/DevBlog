@@ -8,7 +8,7 @@ export const authorizeRole=(...allowedRole)=>{
         if(!req.user){
             throw new ApiError(401,"Unauthorized request")
         }
-
+console.log(allowedRole)
 
         if(!allowedRole.includes(req.user.role)){
             throw new ApiError(403, "Not have permission to perfom this action")

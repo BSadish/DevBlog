@@ -160,6 +160,8 @@ export const updateUser = asyncHandler(async (req, res) => {
 })
 
 export const deleteUser = asyncHandler(async (req, res) => {
+
+
     const deletedUser = await User.findByIdAndDelete(req.user._id, {
         isDeleted: true
     })
