@@ -24,8 +24,8 @@ export const generateAccessAndRefreshToken = async function (userid) {
 
 export const userRegister = asyncHandler(async (req, res) => {
 
-console.log("Hello User")
-    const { username, password, email, bio } = req.body
+// console.log("Hello User")
+    const { username, password, email, bio, role } = req.body
     // console.log(req.body.email)
     if ([username, password, email].some((field) => !field || field.trim() === "")) {
         throw new ApiError(400, "All field must be filled")
@@ -44,7 +44,8 @@ console.log("Hello User")
         username,
         password,
         email,
-        bio
+        bio,
+        role
     })
     if (!user) {
         throw new ApiError(400, "Field are missing to be inserted")
@@ -57,7 +58,7 @@ console.log("Hello User")
 
 
 export const userLogin = asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, role } = req.body;
     if ((!username && !email) || !password) {
         throw new ApiError(401, "The form should not be empty")
     }

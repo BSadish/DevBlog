@@ -25,6 +25,11 @@ bio:{
     type:String,
     default:""
 },
+role:{
+    type:String,
+    required:true,
+    enum:["user","admin"]
+},
 isDeleted:{
     type:Boolean,
     default:false
@@ -49,8 +54,8 @@ return await bcrypt.compare(password,this.password)
 userSchema.methods.generateAccessToken=function(){
     return jwt.sign({
         _id:this._id,
-        username:this.username,
         email:this.email,
+        role:this.role
     },
  process.env.ACCESS_TOKEN_SECRET,
 {

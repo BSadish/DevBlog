@@ -12,10 +12,10 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))
 app.use(cookieParser())
 
 
-app.use("/api/v1/blog",userRouter)
-app.use("/api/v1/blog",postRouter)
-app.use("/api/v1/blog",commentRouter)
-app.use("/api/v1/blog",userLike)
+app.use("/api/v1/blog/user",userRouter)
+app.use("/api/v1/blog/post",postRouter)
+app.use("/api/v1/blog/comment",commentRouter)
+app.use("/api/v1/blog/like",userLike)
 
 app.use(errorHandler)
 export {app}

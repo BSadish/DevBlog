@@ -1,12 +1,18 @@
 import { ApiError } from "../util/ApiError.js"
-import { asyncHandler } from "../util/asyncHandler.js"
 
 
-export const authorizeRole=asyncHandler((...allowedRole)=>{
+
+export const authorizeRole=(...allowedRole)=>{
     return (req,res,next)=>{
-        if(!allowedRole instanceof req.user.role){
-            throw new ApiError(401, "Invalid role requested")
+
+        if(!req.user){
+            throw new ApiError(401,"Unauthorized request")
+        }
+
+
+        if(!allowedRole.includes(req.user.role)){
+            throw new ApiError(403, "Not have permission to perfom this action")
         }
         next()
     }
-})
+}
