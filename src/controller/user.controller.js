@@ -99,7 +99,7 @@ export const userProfile = asyncHandler(async (req, res) => {
 
     const user = await User.find({})
 
-    if (!user || user.isDeleted) {
+    if (!user || user.isDeleted==true) {
         throw new ApiError(404, "User not found");
     }
 
@@ -165,7 +165,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
     const deletedUser = await User.findByIdAndDelete(req.user._id, {
         isDeleted: true
     })
-    if (!deletedUser) {
+    if (deletedUser) {
         throw new ApiError(404, "User not found");
     }
     return res.status(201)
