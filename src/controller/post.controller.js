@@ -4,7 +4,7 @@ import { ApiResponse } from "../util/ApiResponse.js";
 import { asyncHandler } from "../util/asyncHandler.js";
 import { uploadOnCloudinary } from "../util/cloudinary.js";
 import slugify from "slugify"
-
+import redisClient from "../db/redis.js"
 
 export const createPost = asyncHandler(async (req, res) => {
 
@@ -94,54 +94,69 @@ export const getPostById = asyncHandler(async (req, res) => {
 
 export const getAllPosts = asyncHandler(async (req, res) => {
 
-    let page = parseInt(req.query.page) || 1
-    let limit = parseInt(req.query.limit) || 5
-    if (page < 1) {
-        page = 1
-    }
-    if (limit < 1) {
-        limit = 1
-    }
-    if (limit > 50) {
-        limit = 50
-    }
+const cachedata=await redisClient.get('post')
+if(cachedata) return res.json(JSON.parse(cachedata))
 
 
-    const search = req.query.search || ""
+    const mongodbData=await Post.find({})
+    // console.log(mongodbData)
+    await redisClient.set("post",JSON.stringify(mongodbData))
+    await redisClient.expire('post',30)
 
-
-    const filter = {}
-    if (search) {
-        filter.$or = [
-            { title: { $regex: search, $options: "i" } },
-            { content: { $regex: search, $options: "i" } },
-            { tags: { $regex: search, $options: "i" } },
-        ]
-    }
-
-    const totalPosts = await Post.countDocuments(filter)
+    return res.status(200).json(mongodbData)
 
 
 
-    const totalPages = Math.ceil(totalPosts / limit);
 
-    const hasNextPage = page < totalPages
-    const hasPreviousPage = page > 1
-    const posts = await Post.find(filter)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
 
-    return res.status(200)
-        .json(new ApiResponse(200, {
-            posts,
-            currentPage: page,
-            totalPosts,
-            totalPages,
-            limit,
-            hasNextPage,
-            hasPreviousPage
-        }, "Data Fetched successfully"))
+    // let page = parseInt(req.query.page) || 1
+    // let limit = parseInt(req.query.limit) || 5
+    // if (page < 1) {
+    //     page = 1
+    // }
+    // if (limit < 1) {
+    //     limit = 1
+    // }
+    // if (limit > 50) {
+    //     limit = 50
+    // }
+
+
+    // const search = req.query.search || ""
+
+
+    // const filter = {}
+    // if (search) {
+    //     filter.$or = [
+    //         { title: { $regex: search, $options: "i" } },
+    //         { content: { $regex: search, $options: "i" } },
+    //         { tags: { $regex: search, $options: "i" } },
+    //     ]
+    // }
+
+    // const totalPosts = await Post.countDocuments(filter)
+
+
+
+    // const totalPages = Math.ceil(totalPosts / limit);
+
+    // const hasNextPage = page < totalPages
+    // const hasPreviousPage = page > 1
+    // const posts = await Post.find(filter)
+    //     .sort({ createdAt: -1 })
+    //     .skip((page - 1) * limit)
+    //     .limit(limit)
+
+    // return res.status(200)
+    //     .json(new ApiResponse(200, {
+    //         posts,
+    //         currentPage: page,
+    //         totalPosts,
+    //         totalPages,
+    //         limit,
+    //         hasNextPage,
+    //         hasPreviousPage
+    //     }, "Data Fetched successfully"))
 })
 
 
