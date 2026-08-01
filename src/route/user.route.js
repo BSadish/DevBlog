@@ -4,9 +4,10 @@ import { verifyJWT } from "../middleware/auth.middleware.js";
 import {authorizeRole} from "../middleware/role.middleware.js"
 import { upload } from "../middleware/multer.middleware.js";
 // import { limiter } from "../middleware/ratelimit.middleware.js";
+import { rateLimiter } from "../middleware/ratelimit.middleware.js";
 const router=Router();
 
-router.route('/login').post(userLogin);
+router.route('/login').post(rateLimiter, userLogin);
 router.route('/register').post(userRegister);
 router.route("/profile").get(verifyJWT,userProfile)
 router.route('/avatar').patch(verifyJWT, upload.single("avatar"),updateUserProfile)

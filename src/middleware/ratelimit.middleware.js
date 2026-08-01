@@ -14,17 +14,19 @@ import {RedisStore} from "rate-limit-redis"
 //     })
 // });
 
+
+export const rateLimiter=async(req,res,next)=>{
+  
 const MAX_TIME=5
 const MAX_LOGIN_LIMIT=60*15
 
-
-export const rateLimiter=async(req,res,next)=>{
-
+     const id=req.body.email
   
-     const id=req.body.email || req.ip
      const key=`login_limit:${id}`
+     
   try {
      const attamps=await redisClient.get(key)
+     
      if(parent(attamps,10)>=MAX_TIME){
          return res.status(409,{message:"Too many request"})
      }
